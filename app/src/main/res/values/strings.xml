@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">SnapLoad</string>
+    <string name="developer_branding">Developer by Saad Hamdy</string>
+    <string name="tagline">Fast. Simple. Lightweight.</string>
+    <string name="app_version">v1.0.0</string>
+
+    <!-- Onboarding / Welcome -->
+    <string name="onboarding_headline">Download your authorized media easily.</string>
+    <string name="onboarding_subtitle">High-speed media extraction and playback for direct links and authorized public sources with full privacy.</string>
+    <string name="get_started">GET STARTED</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_downloads">Downloads</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Home -->
+    <string name="home_heading">Download Videos Easily</string>
+    <string name="home_subtitle">Paste a supported media link and choose your preferred format.</string>
+    <string name="url_input_hint">Paste video URL here…</string>
+    <string name="btn_paste">PASTE</string>
+    <string name="btn_clear">CLEAR</string>
+    <string name="btn_analyze">ANALYZE LINK</string>
+    <string name="btn_paste_clipboard">PASTE FROM CLIPBOARD</string>
+    <string name="link_detected">Link detected</string>
+    <string name="link_detected_paste">Paste Link</string>
+    <string name="recent_downloads">Recent downloads</string>
+    <string name="supported_platforms">Supported Platforms</string>
+    <string name="direct_links">Direct Links</string>
+
+    <!-- Analysis -->
+    <string name="analyzing_link">Analyzing link…</string>
+    <string name="analyzing_wait">Retrieving authorized media streams and formats</string>
+    <string name="cancel_analysis">Cancel</string>
+
+    <!-- Media Details -->
+    <string name="media_details_title">Media Details</string>
+    <string name="section_video">VIDEO</string>
+    <string name="section_audio">AUDIO</string>
+    <string name="btn_download">DOWNLOAD</string>
+    <string name="estimated_size">Estimated size: %s</string>
+    <string name="duration_label">Duration: %s</string>
+    <string name="source_label">Source: %s</string>
+
+    <!-- Downloads & Progress -->
+    <string name="downloading">Downloading…</string>
+    <string name="download_speed">Speed: %s</string>
+    <string name="download_remaining">Remaining: %s</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+    <string name="btn_pause">PAUSE</string>
+    <string name="btn_resume">RESUME</string>
+    <string name="btn_cancel">CANCEL</string>
+    <string name="download_complete">DOWNLOAD COMPLETE</string>
+    <string name="btn_open">OPEN</string>
+    <string name="btn_share">SHARE</string>
+    <string name="btn_done">DONE</string>
+    <string name="btn_retry">RETRY</string>
+    <string name="btn_delete">DELETE</string>
+
+    <!-- Downloads Tab -->
+    <string name="tab_all">All</string>
+    <string name="tab_active">Active</string>
+    <string name="tab_completed">Completed</string>
+    <string name="tab_failed">Failed</string>
+    <string name="no_downloads_yet">No downloads yet.</string>
+    <string name="download_first_video">Download your first video</string>
+    <string name="clear_all_downloads">Clear All</string>
+    <string name="confirm_delete_title">Delete Download?</string>
+    <string name="confirm_delete_msg">Do you want to delete this file from your device and history?</string>
+    <string name="confirm_delete_yes">Delete</string>
+
+    <!-- Duplicate & Storage -->
+    <string name="file_already_exists">File already exists.</string>
+    <string name="file_exists_msg">A file with this name already exists in your storage.</string>
+    <string name="open_existing">OPEN EXISTING</string>
+    <string name="download_again">DOWNLOAD AGAIN</string>
+    <string name="storage_error_title">Not enough storage space.</string>
+    <string name="storage_error_msg">Required: %1$s | Available: %2$s</string>
+
+    <!-- Errors -->
+    <string name="error_no_link">No link entered.</string>
+    <string name="error_invalid_url">Please enter a valid URL.</string>
+    <string name="error_unsupported_source">This source is not currently supported.</string>
+    <string name="error_media_unavailable">This media cannot be downloaded from this source.</string>
+    <string name="error_connection">Please check your internet connection.</string>
+    <string name="error_generic">Something went wrong.</string>
+    <string name="error_generic_sub">Please check the link and try again.</string>
+    <string name="error_protected">This media is protected by DRM or authentication and cannot be downloaded.</string>
+    <string name="btn_try_again">TRY AGAIN</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="pref_appearance">Appearance</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">System default</string>
+    <string name="pref_downloads">Downloads</string>
+    <string name="default_video_quality">Default video quality</string>
+    <string name="default_audio_format">Default audio format</string>
+    <string name="wifi_only">Download on Wi-Fi only</string>
+    <string name="pref_storage">Storage</string>
+    <string name="clear_history">Clear download history</string>
+    <string name="storage_available">Available Space: %s</string>
+    <string name="pref_language">Language</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="pref_about">About &amp; Legal</string>
+    <string name="about_snapload">About SnapLoad</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="legal_info">Legal Information</string>
+
+    <!-- About Screen -->
+    <string name="about_description">SnapLoad is a lightweight Android application for downloading supported media that users are authorized to save.</string>
+    <string name="about_feature_1">Fast, chunked streaming engine with pause and resume</string>
+    <string name="about_feature_2">Integrated Media3 hardware-accelerated video &amp; audio player</string>
+    <string name="about_feature_3">100% Standalone APK with no accounts or cloud tracking</string>
+
+    <!-- Privacy Screen -->
+    <string name="privacy_heading">Your Privacy Matters</string>
+    <string name="privacy_item_1">SnapLoad does not require an account.</string>
+    <string name="privacy_item_2">SnapLoad does not require Firebase.</string>
+    <string name="privacy_item_3">SnapLoad does not require a cloud database.</string>
+    <string name="privacy_item_4">Downloaded files remain on the user\'s device.</string>
+    <string name="privacy_item_5">The application does not collect unnecessary personal information.</string>
+    <string name="privacy_item_6">Network requests are used only when needed for supported functionality.</string>
+
+    <!-- Legal Screen -->
+    <string name="legal_heading">Legal Notice</string>
+    <string name="legal_item_1">Users are responsible for ensuring that they have permission to download and use any media they save.</string>
+    <string name="legal_item_2">SnapLoad does not encourage copyright infringement.</string>
+    <string name="legal_item_3">SnapLoad does not bypass DRM or access controls.</string>
+    <string name="legal_item_4">Support for a source depends on that source\'s technical and legal policies.</string>
+
+    <!-- Player -->
+    <string name="player_title">Media Player</string>
+    <string name="player_error">Unable to play media file.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_name">SnapLoad Downloads</string>
+    <string name="notif_channel_desc">Shows ongoing download progress and completion notifications.</string>
+    <string name="notif_downloading">Downloading %s</string>
+    <string name="notif_complete">Download complete</string>
+    <string name="notif_failed">Download failed</string>
+</resources>

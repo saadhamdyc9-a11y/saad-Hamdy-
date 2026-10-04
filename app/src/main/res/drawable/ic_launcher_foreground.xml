@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer accent rounded shield / frame -->
+    <path
+        android:pathData="M34,26 C28,26 25,29 25,35 L25,73 C25,79 28,82 34,82 L74,82 C80,82 83,79 83,73 L83,35 C83,29 80,26 74,26 Z"
+        android:strokeWidth="2.5"
+        android:strokeAlpha="0.4">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="25"
+                android:startY="26"
+                android:endX="83"
+                android:endY="82"
+                android:type="linear">
+                <item android:color="#38BDF8" android:offset="0.0" />
+                <item android:color="#818CF8" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Play icon badge in upper center -->
+    <path
+        android:pathData="M48,34 L64,43 L48,52 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="48"
+                android:startY="34"
+                android:endX="64"
+                android:endY="52"
+                android:type="linear">
+                <item android:color="#38BDF8" android:offset="0.0" />
+                <item android:color="#6366F1" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sleek downward download arrow -->
+    <path
+        android:pathData="M51,46 L57,46 L57,60 L65,60 L54,72 L43,60 L51,60 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="43"
+                android:startY="46"
+                android:endX="65"
+                android:endY="72"
+                android:type="linear">
+                <item android:color="#00F0FF" android:offset="0.0" />
+                <item android:color="#A855F7" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Bottom tray / base plate -->
+    <path
+        android:pathData="M38,74 L70,74 C71.6,74 73,75.4 73,77 C73,78.6 71.6,80 70,80 L38,80 C36.4,80 35,78.6 35,77 C35,75.4 36.4,74 38,74 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="35"
+                android:startY="74"
+                android:endX="73"
+                android:endY="80"
+                android:type="linear">
+                <item android:color="#38BDF8" android:offset="0.0" />
+                <item android:color="#818CF8" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

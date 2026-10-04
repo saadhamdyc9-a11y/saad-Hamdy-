@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">SnapLoad</string>
+    <string name="developer_branding">Developer by Saad Hamdy</string>
+    <string name="tagline">سريع. بسيط. خفيف الوزن.</string>
+    <string name="app_version">v1.0.0</string>
+
+    <!-- Onboarding / Welcome -->
+    <string name="onboarding_headline">قم بتنزيل الوسائط المصرح بها بسهولة.</string>
+    <string name="onboarding_subtitle">استخراج وسائط فائق السرعة وتشغيل مباشر للروابط والمصادر العامة المصرح بها مع حماية كاملة للخصوصية.</string>
+    <string name="get_started">ابدأ الآن</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_downloads">التنزيلات</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <!-- Home -->
+    <string name="home_heading">تحميل مقاطع الفيديو بسهولة</string>
+    <string name="home_subtitle">الصق رابط وسائط مدعوم واختر الصيغة والجودة المفضلة لديك.</string>
+    <string name="url_input_hint">الصق رابط الفيديو هنا…</string>
+    <string name="btn_paste">لصق</string>
+    <string name="btn_clear">مسح</string>
+    <string name="btn_analyze">تحليل الرابط</string>
+    <string name="btn_paste_clipboard">لصق من الحافظة</string>
+    <string name="link_detected">تم اكتشاف رابط</string>
+    <string name="link_detected_paste">لصق الرابط</string>
+    <string name="recent_downloads">التنزيلات الأخيرة</string>
+    <string name="supported_platforms">المنصات المدعومة</string>
+    <string name="direct_links">روابط مباشرة</string>
+
+    <!-- Analysis -->
+    <string name="analyzing_link">جارٍ تحليل الرابط…</string>
+    <string name="analyzing_wait">جلب تدفقات الوسائط والصيغ المصرح بها</string>
+    <string name="cancel_analysis">إلغاء</string>
+
+    <!-- Media Details -->
+    <string name="media_details_title">تفاصيل الوسائط</string>
+    <string name="section_video">فيديو</string>
+    <string name="section_audio">صوت</string>
+    <string name="btn_download">تنزيل</string>
+    <string name="estimated_size">الحجم التقديري: %s</string>
+    <string name="duration_label">المدة: %s</string>
+    <string name="source_label">المصدر: %s</string>
+
+    <!-- Downloads & Progress -->
+    <string name="downloading">جارٍ التنزيل…</string>
+    <string name="download_speed">السرعة: %s</string>
+    <string name="download_remaining">المتبقي: %s</string>
+    <string name="download_progress_format">%1$s / %2$s</string>
+    <string name="btn_pause">إيقاف مؤقت</string>
+    <string name="btn_resume">استئناف</string>
+    <string name="btn_cancel">إلغاء</string>
+    <string name="download_complete">اكتمل التنزيل</string>
+    <string name="btn_open">فتح</string>
+    <string name="btn_share">مشاركة</string>
+    <string name="btn_done">تم</string>
+    <string name="btn_retry">إعادة المحاولة</string>
+    <string name="btn_delete">حذف</string>
+
+    <!-- Downloads Tab -->
+    <string name="tab_all">الكل</string>
+    <string name="tab_active">نشط</string>
+    <string name="tab_completed">مكتمل</string>
+    <string name="tab_failed">فشل</string>
+    <string name="no_downloads_yet">لا توجد تنزيلات حتى الآن.</string>
+    <string name="download_first_video">قم بتنزيل أول فيديو لك</string>
+    <string name="clear_all_downloads">مسح الكل</string>
+    <string name="confirm_delete_title">حذف التنزيل؟</string>
+    <string name="confirm_delete_msg">هل تريد حذف هذا الملف نهائياً من جهازك وسجل التنزيلات؟</string>
+    <string name="confirm_delete_yes">حذف</string>
+
+    <!-- Duplicate & Storage -->
+    <string name="file_already_exists">الملف موجود بالفعل.</string>
+    <string name="file_exists_msg">يوجد ملف بهذا الاسم بالفعل في مساحة التخزين الخاصة بك.</string>
+    <string name="open_existing">فتح الملف الحالي</string>
+    <string name="download_again">تنزيل مجدداً</string>
+    <string name="storage_error_title">لا توجد مساحة تخزين كافية.</string>
+    <string name="storage_error_msg">المطلوب: %1$s | المتوفر: %2$s</string>
+
+    <!-- Errors -->
+    <string name="error_no_link">لم يتم إدخال رابط.</string>
+    <string name="error_invalid_url">يرجى إدخال رابط صالح ومكتمل.</string>
+    <string name="error_unsupported_source">هذا المصدر غير مدعوم حالياً.</string>
+    <string name="error_media_unavailable">لا يمكن تنزيل هذه الوسائط من هذا المصدر.</string>
+    <string name="error_connection">يرجى التحقق من اتصالك بالإنترنت.</string>
+    <string name="error_generic">حدث خطأ ما.</string>
+    <string name="error_generic_sub">يرجى التحقق من الرابط والمحاولة مرة أخرى.</string>
+    <string name="error_protected">هذه الوسائط محمية بواسطة إدارة الحقوق الرقمية (DRM) أو تتطلب تسجيل دخول ولا يمكن تنزيلها.</string>
+    <string name="btn_try_again">إعادة المحاولة</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="pref_appearance">المظهر</string>
+    <string name="theme_dark">داكن</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_system">تلقائي حسب النظام</string>
+    <string name="pref_downloads">التنزيلات</string>
+    <string name="default_video_quality">جودة الفيديو الافتراضية</string>
+    <string name="default_audio_format">صيغة الصوت الافتراضية</string>
+    <string name="wifi_only">التنزيل عبر Wi-Fi فقط</string>
+    <string name="pref_storage">التخزين</string>
+    <string name="clear_history">مسح سجل التنزيلات</string>
+    <string name="storage_available">المساحة المتوفرة: %s</string>
+    <string name="pref_language">اللغة</string>
+    <string name="lang_english">English</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="pref_about">حول التطبيق والقانونية</string>
+    <string name="about_snapload">حول SnapLoad</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="legal_info">المعلومات القانونية</string>
+
+    <!-- About Screen -->
+    <string name="about_description">SnapLoad هو تطبيق أندرويد سريع وخفيف الوزن لتنزيل الوسائط المصرح للمستخدمين بحفظها قانونياً.</string>
+    <string name="about_feature_1">محرك تدفق مجزأ سريع يدعم الإيقاف المؤقت والاستئناف</string>
+    <string name="about_feature_2">مشغل وسائط Media3 مدمج مع تسريع عتادي للفيديو والصوت</string>
+    <string name="about_feature_3">تطبيق مستقل 100% بدون حسابات أو تتبع سحابي</string>
+
+    <!-- Privacy Screen -->
+    <string name="privacy_heading">خصوصيتك أولويتنا</string>
+    <string name="privacy_item_1">SnapLoad لا يتطلب إنشاء أي حساب مستخدم.</string>
+    <string name="privacy_item_2">SnapLoad لا يستخدم خدمات Firebase.</string>
+    <string name="privacy_item_3">SnapLoad لا يعتمد على أي قاعدة بيانات سحابية خارجية.</string>
+    <string name="privacy_item_4">الملفات التي تم تنزيلها تبقى محفوظة محلياً على جهاز المستخدم فقط.</string>
+    <string name="privacy_item_5">لا يقوم التطبيق بجمع أي معلومات شخصية غير ضرورية.</string>
+    <string name="privacy_item_6">تُستخدم طلبات الشبكة فقط عند الحاجة لتنفيذ الوظائف المدعومة والمطلوبة.</string>
+
+    <!-- Legal Screen -->
+    <string name="legal_heading">إشعار قانوني</string>
+    <string name="legal_item_1">المستخدمون مسؤولون بمفردهم عن ضمان امتلاكهم الإذن القانوني لتنزيل واستخدام أي وسائط يحفظونها.</string>
+    <string name="legal_item_2">SnapLoad لا يشجع أو يروّج لأي انتهاك لحقوق الطبع والنشر.</string>
+    <string name="legal_item_3">SnapLoad لا يتجاوز أنظمة إدارة الحقوق الرقمية (DRM) أو ضوابط الوصول والتشفير.</string>
+    <string name="legal_item_4">يعتمد دعم أي منصة على السياسات التقنية والقانونية الخاصة بتلك المنصة.</string>
+
+    <!-- Player -->
+    <string name="player_title">مشغل الوسائط</string>
+    <string name="player_error">تعذر تشغيل ملف الوسائط المحدد.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_name">تنزيلات SnapLoad</string>
+    <string name="notif_channel_desc">عرض إشعارات تقدم التنزيل واكتمال الملفات.</string>
+    <string name="notif_downloading">جارٍ تنزيل %s</string>
+    <string name="notif_complete">اكتمل التنزيل بنجاح</string>
+    <string name="notif_failed">فشل التنزيل</string>
+</resources>

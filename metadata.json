@@ -1,0 +1,6 @@
+{
+  "name": "SnapLoad",
+  "description": "A modern, fast, lightweight media downloader for authorized resources with built-in player. Developer by Saad Hamdy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
