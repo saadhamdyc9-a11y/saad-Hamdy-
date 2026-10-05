@@ -102,10 +102,13 @@ fun MediaPlayerScreen(
     var durationMs by remember { mutableLongStateOf(0L) }
     var isSeeking by remember { mutableStateOf(false) }
     var seekProgress by remember { mutableFloatStateOf(0f) }
+    var playerErrorMessage by remember {
+        mutableStateOf(if (!file.exists() || file.length() < 100) "File is empty or not found on device storage." else null)
+    }
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            if (file.exists()) {
+            if (file.exists() && file.length() >= 100) {
                 val mediaItem = MediaItem.fromUri(Uri.fromFile(file))
                 setMediaItem(mediaItem)
                 prepare()
@@ -123,7 +126,12 @@ fun MediaPlayerScreen(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_READY) {
                     durationMs = exoPlayer.duration.coerceAtLeast(0L)
+                    playerErrorMessage = null
                 }
+            }
+
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                playerErrorMessage = error.message ?: "Unable to play media file. The format may not be supported."
             }
         }
         exoPlayer.addListener(listener)
@@ -182,6 +190,32 @@ fun MediaPlayerScreen(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+
+            if (playerErrorMessage != null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Text(
+                            text = "Playback Notice",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = playerErrorMessage!!,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
 
             // Main Player Area
             if (isVideo) {

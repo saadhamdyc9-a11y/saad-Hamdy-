@@ -29,10 +29,30 @@ data class MediaFormat(
 data class MediaInfo(
     val originalUrl: String,
     val title: String,
-    val source: String,             // e.g. "YouTube", "TikTok", "Direct Link", "Instagram", "Web"
+    val source: String,             // e.g. "YouTube", "TikTok", "Direct Link", "Instagram", "Web", "Facebook"
     val durationSeconds: Long = 0,
     val thumbnailUrl: String? = null,
     val formats: List<MediaFormat> = emptyList(),
     val isProtected: Boolean = false,
-    val protectionReason: String? = null
+    val protectionReason: String? = null,
+    val playlistInfo: PlaylistInfo? = null
+)
+
+data class PlaylistItem(
+    val id: String,
+    val title: String,
+    val originalUrl: String,
+    val durationSeconds: Long = 0,
+    val thumbnailUrl: String? = null,
+    val isSelected: Boolean = true,
+    val formats: List<MediaFormat> = emptyList()
+)
+
+data class PlaylistInfo(
+    val playlistId: String,
+    val title: String,
+    val author: String = "",
+    val items: List<PlaylistItem>,
+    val thumbnailUrl: String? = null,
+    val originalUrl: String
 )

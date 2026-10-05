@@ -16,20 +16,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.data.local.AppDatabase
 import com.example.data.local.SettingsManager
+import com.example.data.remote.RemoteConfigManager
 import com.example.data.repository.DownloadRepository
 import com.example.downloader.DownloadEngine
 import com.example.downloader.DownloadNotificationHelper
 import com.example.ui.navigation.SnapLoadApp
 import com.example.ui.theme.SnapLoadTheme
-import java.util.Locale
+import com.example.util.SalawatReminderManager
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var settingsManager: SettingsManager
     private lateinit var downloadRepository: DownloadRepository
     private lateinit var downloadEngine: DownloadEngine
+    private lateinit var remoteConfigManager: RemoteConfigManager
     private var sharedUrl by mutableStateOf<String?>(null)
 
     private val requestNotificationPermission =
@@ -53,6 +58,10 @@ class MainActivity : ComponentActivity() {
         downloadRepository = DownloadRepository(database.downloadDao())
         downloadEngine = DownloadEngine(this, downloadRepository)
         settingsManager = SettingsManager(this)
+        remoteConfigManager = RemoteConfigManager(this)
+
+        // Initialize TTS fallback
+        SalawatReminderManager.initTts(this)
 
         handleIncomingIntent(intent)
 
@@ -70,10 +79,30 @@ class MainActivity : ComponentActivity() {
                     settingsManager = settingsManager,
                     downloadRepository = downloadRepository,
                     downloadEngine = downloadEngine,
+                    remoteConfigManager = remoteConfigManager,
                     initialSharedUrl = sharedUrl
                 )
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Play Salawat audio unconditionally whenever the user opens or returns to the app
+        lifecycleScope.launch {
+            kotlinx.coroutines.delay(300)
+            SalawatReminderManager.playSalawat(this@MainActivity)
+            try {
+                remoteConfigManager.checkRemoteStatus()
+            } catch (e: Exception) {
+                // Ignore any startup lifecycle exceptions
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SalawatReminderManager.release()
     }
 
     override fun onNewIntent(intent: Intent) {

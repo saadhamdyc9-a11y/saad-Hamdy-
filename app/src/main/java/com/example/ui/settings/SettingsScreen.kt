@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
@@ -26,16 +27,30 @@ import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SdStorage
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,16 +60,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
+import com.example.data.admin.AdminManager
 import com.example.data.local.SettingsManager
+import com.example.data.remote.RemoteConfigManager
 import com.example.data.repository.DownloadRepository
 import com.example.ui.components.DeveloperFooter
+import com.example.util.SalawatReminderManager
+import com.example.util.WhatsAppHelper
 import com.example.utils.StorageUtils
 import kotlinx.coroutines.launch
 
@@ -62,24 +87,33 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     settingsManager: SettingsManager,
     downloadRepository: DownloadRepository,
+    remoteConfigManager: RemoteConfigManager,
     onNavigateToAbout: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
-    onNavigateToLegal: () -> Unit
+    onNavigateToLegal: () -> Unit,
+    onNavigateToAdmin: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val adminManager = remember { AdminManager(context, remoteConfigManager) }
 
     val currentTheme by settingsManager.themeFlow.collectAsState(initial = "DARK")
     val currentLanguage by settingsManager.languageFlow.collectAsState(initial = "system")
     val defaultQuality by settingsManager.defaultQualityFlow.collectAsState(initial = "Best")
     val defaultAudio by settingsManager.defaultAudioFlow.collectAsState(initial = "M4A")
     val wifiOnly by settingsManager.wifiOnlyFlow.collectAsState(initial = false)
+    val salawatEnabled by settingsManager.salawatReminderFlow.collectAsState(initial = true)
 
     var themeMenuExpanded by remember { mutableStateOf(false) }
     var qualityMenuExpanded by remember { mutableStateOf(false) }
     var audioMenuExpanded by remember { mutableStateOf(false) }
     var langMenuExpanded by remember { mutableStateOf(false) }
     var historyClearedMessage by remember { mutableStateOf(false) }
+
+    var showAdminPasswordDialog by remember { mutableStateOf(false) }
+    var adminPasswordInput by remember { mutableStateOf("") }
+    var adminPasswordError by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
     val moviesDir = remember { context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.filesDir }
     val freeSpace = remember { StorageUtils.getAvailableDiskSpaceBytes(moviesDir) }
@@ -319,6 +353,144 @@ fun SettingsScreen(
                 }
             }
 
+            // VOICE REMINDER / ZIKR SECTION
+            item {
+                Spacer(modifier = Modifier.height(14.dp))
+                SettingsSectionTitle(title = "التذكير الدائم بالصلاة على النبي ﷺ")
+                SettingsCard {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.VolumeUp,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "الصلاة على النبي عند فتح التطبيق (مفعّل دائماً)",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "يعمل الصوت الشريف تلقائياً دائماً عند فتح التطبيق أو العودة إليه: «اللهم صلِّ وسلم وبارك على سيدنا محمد»",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                SalawatReminderManager.playSalawat(context)
+                            }
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "استمع للصوت الآن (تجربة الصوت)",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
+            // WHATSAPP SUPPORT SECTION
+            item {
+                Spacer(modifier = Modifier.height(14.dp))
+                SettingsSectionTitle(title = "الدعم الفني عبر واتساب (WhatsApp Support)")
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF25D366).copy(alpha = 0.12f)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_whatsapp),
+                                contentDescription = null,
+                                tint = Color(0xFF25D366),
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "تواصل مع المطور عبر واتساب",
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "رقم المطور: ${WhatsAppHelper.WHATSAPP_PHONE_DISPLAY} (للمساعدة والتطوير)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                WhatsAppHelper.openWhatsApp(context)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF25D366),
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_whatsapp),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "مراسلة عبر واتساب الآن (${WhatsAppHelper.WHATSAPP_PHONE_DISPLAY})",
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // ADMIN MANAGEMENT (PASSWORD PROTECTED)
+            item {
+                Spacer(modifier = Modifier.height(14.dp))
+                SettingsSectionTitle(title = "إدارة التطبيق والمطور (Admin)")
+                SettingsCard {
+                    SettingsNavigationRow(
+                        icon = Icons.Default.Security,
+                        title = "لوحة تحكم المدير (Admin Dashboard)",
+                        onClick = {
+                            adminPasswordInput = ""
+                            adminPasswordError = false
+                            passwordVisible = false
+                            showAdminPasswordDialog = true
+                        }
+                    )
+                }
+            }
+
             // ABOUT & LEGAL
             item {
                 Spacer(modifier = Modifier.height(14.dp))
@@ -349,6 +521,82 @@ fun SettingsScreen(
                     showDivider = true
                 )
             }
+        }
+
+        if (showAdminPasswordDialog) {
+            AlertDialog(
+                onDismissRequest = { showAdminPasswordDialog = false },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Security,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "تسجيل دخول المدير (Admin)",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "أدخل كلمة مرور المدير للوصول إلى لوحة التحكم الشاملة وإيقاف التطبيق أو إطلاق التحديثات:",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        OutlinedTextField(
+                            value = adminPasswordInput,
+                            onValueChange = {
+                                adminPasswordInput = it
+                                adminPasswordError = false
+                            },
+                            label = { Text("كلمة المرور") },
+                            placeholder = { Text("أدخل كلمة المرور...") },
+                            singleLine = true,
+                            isError = adminPasswordError,
+                            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            trailingIcon = {
+                                val icon = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                    Icon(imageVector = icon, contentDescription = null)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        if (adminPasswordError) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "كلمة المرور غير صحيحة!",
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            if (adminManager.verifyPassword(adminPasswordInput.trim())) {
+                                showAdminPasswordDialog = false
+                                onNavigateToAdmin()
+                            } else {
+                                adminPasswordError = true
+                            }
+                        }
+                    ) {
+                        Text("دخول")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showAdminPasswordDialog = false }) {
+                        Text("إلغاء")
+                    }
+                }
+            )
         }
     }
 }

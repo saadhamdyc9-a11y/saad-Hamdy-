@@ -7,6 +7,9 @@ class MediaAnalyzer(
     private val providers: List<MediaSourceProvider> = listOf(
         DirectMediaProvider(),
         YouTubeSourceProvider(),
+        FacebookSourceProvider(),
+        TelegramSourceProvider(),
+        SoundCloudSourceProvider(),
         TikTokSourceProvider(),
         InstagramSourceProvider(),
         TwitterXSourceProvider(),
@@ -17,21 +20,22 @@ class MediaAnalyzer(
     fun validateUrl(rawUrl: String): ValidationResult {
         val trimmed = rawUrl.trim()
         if (trimmed.isEmpty()) {
-            return ValidationResult.Error("No link entered.")
+            return ValidationResult.Error("يرجى إدخال رابط للتحميل.")
         }
-        val lower = trimmed.lowercase()
-        if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
-            return ValidationResult.Error("Please enter a valid URL starting with https://")
+        val target = if (!trimmed.startsWith("http://", ignoreCase = true) && !trimmed.startsWith("https://", ignoreCase = true)) {
+            "https://$trimmed"
+        } else {
+            trimmed
         }
         return try {
-            val uri = URI(trimmed)
+            val uri = URI(target)
             if (uri.host.isNullOrBlank()) {
-                ValidationResult.Error("Please enter a valid URL.")
+                ValidationResult.Error("يرجى إدخال رابط صحيح.")
             } else {
-                ValidationResult.Valid(trimmed)
+                ValidationResult.Valid(target)
             }
         } catch (e: Exception) {
-            ValidationResult.Error("Please enter a valid URL.")
+            ValidationResult.Error("يرجى إدخال رابط صحيح.")
         }
     }
 
@@ -43,16 +47,21 @@ class MediaAnalyzer(
 
         val targetUrl = (validation as ValidationResult.Valid).url
 
+        var lastError: Throwable? = null
         for (provider in providers) {
             if (provider.supports(targetUrl)) {
                 val result = provider.analyze(targetUrl)
                 if (result.isSuccess) {
                     return result
+                } else {
+                    lastError = result.exceptionOrNull()
                 }
             }
         }
 
-        return Result.failure(IllegalStateException("This source is not currently supported or media could not be analyzed."))
+        return Result.failure(
+            lastError ?: IllegalStateException("هذا المصدر غير مدعوم حالياً أو تعذر تحليل الوسائط منه.")
+        )
     }
 
     sealed class ValidationResult {

@@ -130,6 +130,30 @@ class HomeViewModel(
         _uiState.update { it.copy(duplicateFileForDownload = null) }
     }
 
+    fun startBatchDownload(
+        playlistInfo: com.example.domain.model.PlaylistInfo,
+        formatType: String,
+        selectedIds: Set<String>
+    ) {
+        val selectedItems = playlistInfo.items.filter { it.id in selectedIds }
+        viewModelScope.launch {
+            for (item in selectedItems) {
+                val format = item.formats.find { it.id.endsWith(formatType) } ?: item.formats.firstOrNull()
+                if (format != null) {
+                    val media = MediaInfo(
+                        originalUrl = item.originalUrl,
+                        title = item.title,
+                        source = playlistInfo.title,
+                        thumbnailUrl = item.thumbnailUrl,
+                        formats = listOf(format)
+                    )
+                    downloadEngine.enqueueDownload(media, format, false)
+                }
+            }
+            _uiState.update { it.copy(mediaInfo = null) }
+        }
+    }
+
     class Factory(
         private val repository: DownloadRepository,
         private val engine: DownloadEngine

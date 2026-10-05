@@ -53,39 +53,26 @@ class InstagramSourceProvider(
             val videoMatcher = ogVideoPattern.matcher(html)
             if (videoMatcher.find()) videoUrl = videoMatcher.group(1)
 
-            val actualDownloadUrl = videoUrl ?: url
-
             val formats = listOf(
                 MediaFormat(
                     id = "ig_hd",
                     format = "MP4",
-                    quality = "1080p HD",
+                    quality = "HD Video (Original)",
                     mediaType = MediaType.VIDEO,
-                    estimatedSizeBytes = 24_000_000L,
-                    downloadUrl = actualDownloadUrl,
+                    estimatedSizeBytes = 18_000_000L,
+                    downloadUrl = videoUrl ?: url,
                     mimeType = "video/mp4",
                     resolutionWidth = 1080,
                     resolutionHeight = 1920
                 ),
                 MediaFormat(
-                    id = "ig_sd",
-                    format = "MP4",
-                    quality = "720p SD",
-                    mediaType = MediaType.VIDEO,
-                    estimatedSizeBytes = 12_000_000L,
-                    downloadUrl = actualDownloadUrl,
-                    mimeType = "video/mp4",
-                    resolutionWidth = 720,
-                    resolutionHeight = 1280
-                ),
-                MediaFormat(
                     id = "ig_audio",
-                    format = "M4A",
-                    quality = "Audio Only",
+                    format = "MP3",
+                    quality = "Audio MP3",
                     mediaType = MediaType.AUDIO,
-                    estimatedSizeBytes = 2_800_000L,
-                    downloadUrl = actualDownloadUrl,
-                    mimeType = "audio/mp4"
+                    estimatedSizeBytes = 3_200_000L,
+                    downloadUrl = videoUrl ?: url,
+                    mimeType = "audio/mpeg"
                 )
             )
 
@@ -96,7 +83,9 @@ class InstagramSourceProvider(
                     source = "Instagram",
                     durationSeconds = 0,
                     thumbnailUrl = thumbnail,
-                    formats = formats
+                    formats = formats,
+                    isProtected = false,
+                    protectionReason = null
                 )
             )
         } catch (e: Exception) {

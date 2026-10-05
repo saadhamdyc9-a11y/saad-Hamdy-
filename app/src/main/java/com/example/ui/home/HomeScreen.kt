@@ -25,15 +25,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Audiotrack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlaylistPlay
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,9 +60,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -71,9 +80,11 @@ import com.example.R
 import com.example.data.local.DownloadEntity
 import com.example.domain.model.DownloadStatus
 import com.example.ui.components.DeveloperFooter
+import com.example.ui.components.PcInstallationDialog
 import com.example.ui.components.SnapLoadHeader
 import com.example.ui.details.DuplicateFileDialog
 import com.example.ui.details.MediaDetailsSheet
+import com.example.ui.details.PlaylistDetailsSheet
 import com.example.utils.StorageUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,6 +99,7 @@ fun HomeScreen(
     val liveProgressMap by viewModel.liveProgress.collectAsState()
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    var showPcDialog by remember { mutableStateOf(false) }
 
     // Auto-check clipboard when screen opens
     LaunchedEffect(Unit) {
@@ -136,6 +148,71 @@ fun HomeScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+
+            // Live Community User Counter Badge & PC Button
+            item {
+                val remoteConfig = remember { com.example.data.remote.RemoteConfigManager(context).getCachedConfig() }
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(9.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF28A745))
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "🔥 +${remoteConfig.totalUsersCount} مستخدم نشط • ${remoteConfig.totalDownloadsCount} تحميل",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+
+                        // Small, sleek compact PC button
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                            modifier = Modifier.clickable { showPcDialog = true }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Computer,
+                                    contentDescription = "PC",
+                                    modifier = Modifier.size(12.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = "PC",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -404,14 +481,75 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     val platforms = listOf(
+                        "SoundCloud" to Icons.Default.Audiotrack,
                         "YouTube" to Icons.Default.Movie,
+                        "تليجرام وستوري" to Icons.Default.Send,
+                        "أفلام ومواقع كروم" to Icons.Default.Language,
+                        "قوائم التشغيل" to Icons.Default.PlaylistPlay,
+                        "فيسبوك وستوري" to Icons.Default.VideoLibrary,
                         "TikTok" to Icons.Default.PlayArrow,
                         "Instagram" to Icons.Default.VideoLibrary,
-                        "X / Twitter" to Icons.Default.Language,
-                        "Direct Links" to Icons.Default.Link
+                        "X / Twitter" to Icons.Default.Public,
+                        "روابط مباشرة" to Icons.Default.Link
                     )
                     items(platforms) { (name, icon) ->
                         PlatformChip(name = name, icon = icon)
+                    }
+                }
+            }
+
+            // Quick Test Direct Links
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    text = "Try Direct Media (1-Click Test)",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(horizontal = 22.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    val samples = listOf(
+                        Triple("الصلاة على النبي (SoundCloud HQ)", "https://soundcloud.com/mohamed-elnaghia-603300044/4c3m27rdolqn", Icons.Default.Audiotrack),
+                        Triple("فيديو تليجرام وقنوات (Telegram Video)", "https://t.me/telegram/184", Icons.Default.Send),
+                        Triple("أفلام وويب كروم (Chrome Movie Stream)", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", Icons.Default.Language),
+                        Triple("قائمة تشغيل كاملة (YouTube Playlist)", "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr", Icons.Default.PlaylistPlay),
+                        Triple("فيديو فيسبوك وريلز (Facebook Video)", "https://www.facebook.com/watch/?v=10153231379946729", Icons.Default.VideoLibrary),
+                        Triple("Big Buck Bunny (1080p MP4)", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", Icons.Default.Movie),
+                        Triple("Tears of Steel (720p MP4)", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", Icons.Default.Movie),
+                        Triple("Sample Song (MP3)", "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", Icons.Default.Audiotrack)
+                    )
+                    items(samples) { (name, link, icon) ->
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                            modifier = Modifier.clickable {
+                                viewModel.onUrlChanged(link)
+                                viewModel.analyzeUrl(link)
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = name,
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -517,16 +655,33 @@ fun HomeScreen(
             }
         }
 
-        // Media Details Bottom Sheet
+        // Media Details Bottom Sheet (Single Item or Playlist)
         if (uiState.mediaInfo != null) {
-            MediaDetailsSheet(
-                mediaInfo = uiState.mediaInfo!!,
-                sheetState = sheetState,
-                onDismiss = { viewModel.dismissMediaDetails() },
-                onDownloadSelected = { format ->
-                    viewModel.startDownload(format)
-                }
-            )
+            val media = uiState.mediaInfo!!
+            if (media.playlistInfo != null) {
+                PlaylistDetailsSheet(
+                    playlistInfo = media.playlistInfo!!,
+                    sheetState = sheetState,
+                    onDismiss = { viewModel.dismissMediaDetails() },
+                    onBatchDownload = { formatType, selectedIds ->
+                        viewModel.startBatchDownload(media.playlistInfo!!, formatType, selectedIds)
+                    }
+                )
+            } else {
+                MediaDetailsSheet(
+                    mediaInfo = media,
+                    sheetState = sheetState,
+                    onDismiss = { viewModel.dismissMediaDetails() },
+                    onDownloadSelected = { format ->
+                        viewModel.startDownload(format)
+                    }
+                )
+            }
+        }
+
+        // PC Installation Guide Dialog
+        if (showPcDialog) {
+            PcInstallationDialog(onDismiss = { showPcDialog = false })
         }
 
         // Duplicate File Dialog

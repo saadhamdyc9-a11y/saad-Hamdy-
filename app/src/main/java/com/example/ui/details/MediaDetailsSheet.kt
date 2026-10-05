@@ -167,7 +167,7 @@ fun MediaDetailsSheet(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // VIDEO Formats Section
             if (videoFormats.isNotEmpty()) {

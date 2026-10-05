@@ -21,6 +21,15 @@ class SettingsManager(private val context: Context) {
         val KEY_DEFAULT_AUDIO = stringPreferencesKey("default_audio")     // "M4A", "MP3"
         val KEY_WIFI_ONLY = booleanPreferencesKey("wifi_only")
         val KEY_FIRST_LAUNCH = booleanPreferencesKey("first_launch_done")
+        val KEY_SALAWAT_REMINDER = booleanPreferencesKey("salawat_reminder_audio")
+    }
+
+    val salawatReminderFlow: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[KEY_SALAWAT_REMINDER] ?: true // Enabled by default
+    }
+
+    suspend fun setSalawatReminder(enabled: Boolean) {
+        context.dataStore.edit { prefs -> prefs[KEY_SALAWAT_REMINDER] = enabled }
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { prefs ->

@@ -69,13 +69,20 @@ class DownloadEngine(
     }
 
     private fun getDestinationDir(mediaType: MediaType): File {
-        val dir = if (mediaType == MediaType.VIDEO) {
-            context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.filesDir
-        } else {
-            context.getExternalFilesDir(Environment.DIRECTORY_MUSIC) ?: context.filesDir
+        val publicDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val snaploadDir = File(publicDownloads, "SnapLoad")
+        if (!snaploadDir.exists()) {
+            try {
+                snaploadDir.mkdirs()
+            } catch (_: Exception) {}
         }
-        if (!dir.exists()) dir.mkdirs()
-        return dir
+        return if (snaploadDir.exists() && snaploadDir.canWrite()) {
+            snaploadDir
+        } else {
+            val appDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir
+            val subDir = File(appDir, "SnapLoad").apply { if (!exists()) mkdirs() }
+            subDir
+        }
     }
 
     suspend fun enqueueDownload(
@@ -202,9 +209,72 @@ class DownloadEngine(
             }
 
             try {
+                var streamUrl = entity.downloadUrl
+                if (entity.source.equals("YouTube", ignoreCase = true) ||
+                    streamUrl.contains("youtube.com") || streamUrl.contains("youtu.be")) {
+                    val resolved = com.example.media.provider.YouTubeSourceProvider.resolveDirectStream(
+                        okHttpClient,
+                        entity.originalUrl,
+                        entity.quality,
+                        entity.format
+                    )
+                    if (resolved.isFailure) {
+                        throw resolved.exceptionOrNull() ?: IllegalStateException("Could not resolve media stream URL")
+                    }
+                    streamUrl = resolved.getOrThrow()
+                } else if (streamUrl.contains("tiktok.com")) {
+                    val formBody = okhttp3.FormBody.Builder().add("url", entity.originalUrl).build()
+                    val req = Request.Builder()
+                        .url("https://www.tikwm.com/api/")
+                        .post(formBody)
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                        .build()
+                    val resp = okHttpClient.newCall(req).execute()
+                    val b = resp.body?.string() ?: ""
+                    resp.close()
+                    if (b.isNotBlank()) {
+                        val j = org.json.JSONObject(b)
+                        if (j.optInt("code") == 0 && j.has("data")) {
+                            val d = j.getJSONObject("data")
+                            val play = d.optString("play", "")
+                            val hd = d.optString("hdplay", "")
+                            val music = d.optString("music", "")
+                            streamUrl = when {
+                                entity.format.equals("MP3", ignoreCase = true) && music.isNotBlank() -> music
+                                hd.isNotBlank() -> hd
+                                play.isNotBlank() -> play
+                                else -> streamUrl
+                            }
+                        }
+                    }
+                } else if (entity.source.equals("Instagram", ignoreCase = true) &&
+                    (streamUrl.contains("instagram.com") || streamUrl.contains("instagr.am"))) {
+                    val resolved = com.example.media.provider.YouTubeSourceProvider.resolveDirectStream(
+                        okHttpClient,
+                        entity.originalUrl,
+                        entity.quality,
+                        entity.format
+                    )
+                    if (resolved.isSuccess) {
+                        streamUrl = resolved.getOrThrow()
+                    }
+                } else if (entity.source.contains("Twitter", ignoreCase = true) ||
+                    entity.source.contains("X", ignoreCase = true) ||
+                    streamUrl.contains("twitter.com") || streamUrl.contains("x.com")) {
+                    val resolved = com.example.media.provider.YouTubeSourceProvider.resolveDirectStream(
+                        okHttpClient,
+                        entity.originalUrl,
+                        entity.quality,
+                        entity.format
+                    )
+                    if (resolved.isSuccess) {
+                        streamUrl = resolved.getOrThrow()
+                    }
+                }
+
                 val requestBuilder = Request.Builder()
-                    .url(entity.downloadUrl)
-                    .header("User-Agent", "Mozilla/5.0 (Android; Mobile) SnapLoad/1.0")
+                    .url(streamUrl)
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
 
                 if (startByte > 0) {
                     requestBuilder.header("Range", "bytes=$startByte-")
@@ -223,6 +293,11 @@ class DownloadEngine(
 
                 val responseBody = response.body
                     ?: throw IllegalStateException("Empty response body from media source")
+
+                val contentType = response.header("Content-Type")?.lowercase() ?: ""
+                if (contentType.contains("text/html") || contentType.contains("text/plain")) {
+                    throw IllegalStateException("The media URL returned a web page (HTML) instead of a direct video/audio stream. Direct media stream required.")
+                }
 
                 val contentLength = responseBody.contentLength()
                 val totalBytes = if (contentLength > 0) {
@@ -315,6 +390,23 @@ class DownloadEngine(
                     partFile.copyTo(finalFile, overwrite = true)
                     partFile.delete()
                 }
+
+                if (finalFile.length() < 1024) {
+                    throw IllegalStateException("Downloaded file is empty or corrupted (${finalFile.length()} bytes).")
+                }
+
+                // Register with Android MediaStore immediately
+                try {
+                    android.media.MediaScannerConnection.scanFile(
+                        context,
+                        arrayOf(finalFile.absolutePath),
+                        arrayOf(entity.mimeType)
+                    ) { _, _ -> }
+                    val mediaScanIntent = android.content.Intent(android.content.Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
+                        data = android.net.Uri.fromFile(finalFile)
+                    }
+                    context.sendBroadcast(mediaScanIntent)
+                } catch (_: Exception) {}
 
                 repository.updateProgress(id, DownloadStatus.COMPLETED, totalDownloaded, totalBytes)
                 _liveProgress.update { map ->

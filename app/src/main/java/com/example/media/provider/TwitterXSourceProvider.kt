@@ -49,35 +49,35 @@ class TwitterXSourceProvider(
 
             val formats = listOf(
                 MediaFormat(
-                    id = "x_720p",
+                    id = "x_1080p",
                     format = "MP4",
-                    quality = "720p HD",
+                    quality = "1080p Full HD",
                     mediaType = MediaType.VIDEO,
-                    estimatedSizeBytes = 18_000_000L,
+                    estimatedSizeBytes = 22_000_000L,
                     downloadUrl = url,
                     mimeType = "video/mp4",
-                    resolutionWidth = 1280,
-                    resolutionHeight = 720
+                    resolutionWidth = 1080,
+                    resolutionHeight = 1920
                 ),
                 MediaFormat(
-                    id = "x_480p",
+                    id = "x_720p",
                     format = "MP4",
-                    quality = "480p SD",
+                    quality = "720p HD Video",
                     mediaType = MediaType.VIDEO,
-                    estimatedSizeBytes = 9_000_000L,
+                    estimatedSizeBytes = 12_000_000L,
                     downloadUrl = url,
                     mimeType = "video/mp4",
-                    resolutionWidth = 854,
-                    resolutionHeight = 480
+                    resolutionWidth = 720,
+                    resolutionHeight = 1280
                 ),
                 MediaFormat(
                     id = "x_audio",
-                    format = "M4A",
-                    quality = "Audio Only",
+                    format = "MP3",
+                    quality = "Audio MP3",
                     mediaType = MediaType.AUDIO,
-                    estimatedSizeBytes = 2_100_000L,
+                    estimatedSizeBytes = 3_000_000L,
                     downloadUrl = url,
-                    mimeType = "audio/mp4"
+                    mimeType = "audio/mpeg"
                 )
             )
 
@@ -88,7 +88,9 @@ class TwitterXSourceProvider(
                     source = "X / Twitter",
                     durationSeconds = 0,
                     thumbnailUrl = null,
-                    formats = formats
+                    formats = formats,
+                    isProtected = false,
+                    protectionReason = null
                 )
             )
         } catch (e: Exception) {
